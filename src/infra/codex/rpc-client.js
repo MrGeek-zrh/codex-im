@@ -1,6 +1,7 @@
 const { spawn } = require("child_process");
 const os = require("os");
 const WebSocket = require("ws");
+const { buildUserInputItems } = require("./user-input");
 
 const IS_WINDOWS = os.platform() === "win32";
 const DEFAULT_CODEX_COMMAND = "codex";
@@ -142,12 +143,16 @@ class CodexRpcClient {
   async sendUserMessage({
     threadId,
     text,
+    imagePaths = [],
     model = null,
     effort = null,
     accessMode = null,
     workspaceRoot = "",
   }) {
-    const input = buildTurnInputPayload(text);
+    const input = buildTurnInputPayload({
+      text,
+      imagePaths,
+    });
     return threadId
       ? this.sendRequest(
         "turn/start",
@@ -346,18 +351,8 @@ function buildListThreadsParams({ cursor, limit, sortKey }) {
   return params;
 }
 
-function buildTurnInputPayload(text) {
-  const normalizedText = normalizeNonEmptyString(text);
-  const items = [];
-
-  if (normalizedText) {
-    items.push({
-      type: "text",
-      text: normalizedText,
-    });
-  }
-
-  return items;
+function buildTurnInputPayload(payload) {
+  return buildUserInputItems(payload);
 }
 
 function buildTurnStartParams({ threadId, input, model, effort, accessMode, workspaceRoot }) {
