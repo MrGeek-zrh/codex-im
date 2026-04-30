@@ -143,6 +143,8 @@ npm run feishu-bot
 
 # 飞书配置
 
+完整连接步骤见 [飞书连接教程](docs/feishu-setup.md)。
+
 1. 在飞书平台创建机器人
 
 2. 事件权限配置
